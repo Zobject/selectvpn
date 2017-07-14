@@ -1,11 +1,14 @@
 #coding:utf8
-
+import simplejson as simplejson
 from django.shortcuts import render
 from django.http import request ,JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from itsdangerous import  URLSafeTimedSerializer
+from rest_framework.parsers import JSONParser
 import  pymongo
 import  random
 import string
+import json
 import httplib
 # Create your views here.
 
@@ -68,11 +71,12 @@ def stopvpn(request):
             print 'xxxxxxxxxxx'
         return JsonResponse({'target':1})
 
-
+@csrf_exempt
 def startvpn(request):
-    if request.method=='GET':
+    if request.method=='POST':
         #判断连接具体某个节点服务器，和节点表
-        JiedianName = request.GET['name']
+        Jiedianinfo=JSONParser().parse(request)
+        JiedianName = Jiedianinfo.get('name')
         if JiedianName == 'US':
             collection=db.usa
             Host='13.59.235.45'

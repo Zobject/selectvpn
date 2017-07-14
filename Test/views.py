@@ -1,5 +1,4 @@
 #coding:utf8
-import simplejson as simplejson
 from django.shortcuts import render
 from django.http import request ,JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -77,7 +76,7 @@ def stopvpn(request):
 def startvpn(request):
     if request.method=='POST':
         #判断连接具体某个节点服务器，和节点表
-        Jiedianinfo=simplejson.loads(request.body)
+        Jiedianinfo=JSONParser().parse(request)
         JiedianName = Jiedianinfo.get('name')
         if JiedianName == 'US':
             collection=db.usa

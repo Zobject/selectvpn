@@ -28,12 +28,14 @@ def encrypt1(port):
     rule=URLSafeTimedSerializer('secret-key',salt='hello')
     token=rule.dumps({'port':port})
     return token
+
+@csrf_exempt
 def stopvpn(request):
-    if request.method=='GET':
-        if request.method == 'GET':
+        if request.method == 'POST':
             #获取返回信息
-            JiedianName = request.GET['name']
-            port=request.GET['port']
+            Jiedianinfo=JSONParser().parse(request)
+            JiedianName = Jiedianinfo.get('name')
+            port=Jiedianinfo.get('port')
             #给端口进行加密
             send_data = encrypt1(port)
             #判读具体的节点区域根据不同的节点信息给HOST进行赋值
@@ -75,7 +77,7 @@ def stopvpn(request):
 def startvpn(request):
     if request.method=='POST':
         #判断连接具体某个节点服务器，和节点表
-        Jiedianinfo=JSONParser().parse(request)
+        Jiedianinfo=simplejson.loads(request.body)
         JiedianName = Jiedianinfo.get('name')
         if JiedianName == 'US':
             collection=db.usa

@@ -1,5 +1,5 @@
 import pymongo
-from  datetime import datetime ,timedelta
+from  datetime import datetime
 import time
 
 try:
@@ -16,6 +16,7 @@ def check():
         collection=db.usa
         data=list(collection.find({'target':1}))
         now=datetime.now()
+        print "+++++++"
         for d in data:
             print d
             checktime=d.get('time')
@@ -73,7 +74,9 @@ def check():
                                   {'$set': {'target': 0, 'password': '3213213', 'time': datetime.now()}})
             else:
                 print (now - checktime).seconds
+
                 print now
+        print 'xxxxxxxxxxx'
         time.sleep(1800)
 
 if __name__ == '__main__':

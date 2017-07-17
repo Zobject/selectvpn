@@ -9,6 +9,7 @@ import  random
 import string
 import json
 import httplib
+import datetime
 # Create your views here.
 
 try:
@@ -48,8 +49,8 @@ def stopvpn(request):
             elif JiedianName == 'AS':
                 collection = db.jap
             # print port
-            print collection.find_one({'port':int(port)})
-
+            # print collection.find_one({'port':int(port)})
+            date=collection.find_one({'port':int(port)})
             #向节点服务器发送关闭消息
             url = 'http://' + Host + ':1200/token=' + send_data
             print url
@@ -63,8 +64,9 @@ def stopvpn(request):
             #根据节点服务的返回进行不同的操作，如果返回成功对数据库进行更新将端口更新为可用，并且通知客户端。
             if res=='success':
                 #更新数据库
-                collection.update({'port': int(port)}, {'$inc': {'target': -1}})
-                return JsonResponse({'reg':1,'target':'success'})
+                if date.get('target')==1:
+                    collection.update({'port': int(port)}, {'$inc': {'target': -1}})
+                    return JsonResponse({'reg':1,'target':'success'})
             else:
                 #如果节点服务返回失败或者其他，不对节点列表进行操纵，返回给客户端失败让客户端进行。
                 return  JsonResponse({'reg':0,'target':'fail'})
@@ -101,7 +103,7 @@ def startvpn(request):
                 for d in lastportdata:
                     port=d.get('port')+1
             #在最后一个在用端口+1开放给新的用户
-            collection.insert({'ip':Host,'port':port,'target':1,'password':password})
+            collection.insert({'ip':Host,'port':port,'target':1,'password':password,'time':datetime.datetime.now()})
             print port,Host,password
             #对端口进行加密
             send_data=encrypt(port,password)
@@ -124,7 +126,7 @@ def startvpn(request):
         print res
         if res=='success':
             # 对端口信息进行更新
-            collection.update({'port': port, 'ip': Host}, {'$set': {'target': 1, 'password': password}})
+            collection.update({'port': port, 'ip': Host}, {'$set': {'target': 1, 'password': password,'time':datetime.datetime.now()}})
             return JsonResponse({'reg':1,'port': port, 'password': password})
         else:
             return JsonResponse({'reg':0,'target':'fail'})
@@ -133,5 +135,5 @@ def startvpn(request):
 
 #生成6位密码
 def makepassword():
-    password=''.join(random.sample(string.ascii_letters+string.digits,5))
+    password=''.join(random.sample(string.ascii_letters+string.digits,6))
     return password

@@ -1,3 +1,4 @@
+#coding:utf8
 import pymongo
 from  datetime import datetime
 import time

@@ -104,7 +104,7 @@ def startvpn(request):
                 for d in lastportdata:
                     port=d.get('port')+1
             #在最后一个在用端口+1开放给新的用户
-            collection.insert({'ip':'13.59.235.45','port':1059,'target':1,'password':'lSlZ1h','time':datetime.datetime.now()})
+            collection.insert({'ip':Host,'port':port,'target':1,'password':password,'time':datetime.datetime.now()})
             print port,Host,password
             #对端口进行加密
             send_data=encrypt(port,password)
@@ -128,7 +128,7 @@ def startvpn(request):
         if res=='success':
             # 对端口信息进行更新
             collection.update({'port': port, 'ip': Host}, {'$set': {'target': 1, 'password': password,'time':datetime.datetime.now()}})
-            return JsonResponse({'reg':1,'port': port, 'password':password})
+            return JsonResponse({'reg':1,'port': port, 'password': base64.password})
         else:
             return JsonResponse({'reg':0,'target':'fail'})
         return JsonResponse({'target':1})

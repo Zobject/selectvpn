@@ -128,7 +128,7 @@ def startvpn(request):
         if res=='success':
             # 对端口信息进行更新
             collection.update({'port': port, 'ip': Host}, {'$set': {'target': 1, 'password': password,'time':datetime.datetime.now()}})
-            return JsonResponse({'reg':1,'port': port, 'password': base64.password})
+            return JsonResponse({'reg':1,'port': port, 'password':password})
         else:
             return JsonResponse({'reg':0,'target':'fail'})
         return JsonResponse({'target':1})

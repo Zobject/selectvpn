@@ -7,7 +7,7 @@ from rest_framework.parsers import JSONParser
 import  pymongo
 import  random
 import string
-import json
+import base64
 import httplib
 import datetime
 # Create your views here.
@@ -41,13 +41,14 @@ def stopvpn(request):
             #判读具体的节点区域根据不同的节点信息给HOST进行赋值
             if JiedianName == 'US':
                 collection = db.usa
-                Host='13.59.235.45'
+                Host='13.59.85.139'
 
             elif JiedianName == 'EU':
                 collection = db.eu
-
+                Host = '52.56.168.139'
             elif JiedianName == 'AS':
                 collection = db.jap
+                Host = '52.192.140.166'
             # print port
             # print collection.find_one({'port':int(port)})
             date=collection.find_one({'port':int(port)})
@@ -82,7 +83,7 @@ def startvpn(request):
         JiedianName = Jiedianinfo.get('name')
         if JiedianName == 'US':
             collection=db.usa
-            Host='13.59.235.45'
+            Host='13.59.85.139'
         elif JiedianName == 'EU':
             collection=db.eu
             Host = '52.56.168.139'
@@ -103,7 +104,7 @@ def startvpn(request):
                 for d in lastportdata:
                     port=d.get('port')+1
             #在最后一个在用端口+1开放给新的用户
-            collection.insert({'ip':Host,'port':port,'target':1,'password':password,'time':datetime.datetime.now()})
+            collection.insert({'ip':'13.59.235.45','port':1059,'target':1,'password':'lSlZ1h','time':datetime.datetime.now()})
             print port,Host,password
             #对端口进行加密
             send_data=encrypt(port,password)
@@ -127,7 +128,7 @@ def startvpn(request):
         if res=='success':
             # 对端口信息进行更新
             collection.update({'port': port, 'ip': Host}, {'$set': {'target': 1, 'password': password,'time':datetime.datetime.now()}})
-            return JsonResponse({'reg':1,'port': port, 'password': password})
+            return JsonResponse({'reg':1,'port': port, 'password': base64.password})
         else:
             return JsonResponse({'reg':0,'target':'fail'})
         return JsonResponse({'target':1})
